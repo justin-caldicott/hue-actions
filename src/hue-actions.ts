@@ -5,6 +5,8 @@ import { readConfig, writeConfig } from './config'
 import { service } from './service'
 import { registration } from './registration'
 
+// TODO: Ideally have hue-actions.ts called index.ts and hue-actions-launch.ts as just launch.ts
+
 const program = new Command()
 
 program
