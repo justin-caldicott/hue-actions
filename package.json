@@ -10,7 +10,8 @@
   },
   "scripts": {
     "build": "tsc && chmod +x dist/hue-actions-launch.js",
-    "test:start": "ts-node src/hue-actions.ts start"
+    "start": "ts-node src/hue-actions.ts start",
+    "put:config": "curl -H 'apikey: '\"$GATEWAY_APIKEY\"'' -X PUT --data-binary @../pi/hue-actions.yml http://localhost:14201/config"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.11",

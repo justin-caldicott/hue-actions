@@ -4,7 +4,7 @@ import got from 'got'
 import { deconzConfigSchema, deconzEventSchema } from './types'
 import { sensorEventHandler } from './sensor-event-handler'
 
-export const listener = async () => {
+export const startListener = async () => {
   const { gatewayUrl, gatewayApiKey } = getConfig()
 
   if (!gatewayUrl) {
@@ -40,6 +40,7 @@ export const listener = async () => {
     const messageJson = message.toString('utf8')
     const event = deconzEventSchema.parse(JSON.parse(messageJson))
     if (event.r === 'sensors') {
+      // console.log('Sensor message JSON', messageJson)
       await sensorEventHandler(event)
     }
     // TODO: Invalidate sensors on config change (not state change)

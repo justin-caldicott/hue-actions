@@ -24,5 +24,5 @@ export const getConfig = () => {
 export const updateConfig = (config: Config) => {
   configInstance = config
   writeConfig(config)
-  console.log('Config updated', JSON.stringify(config))
+  console.log('Config updated')
 }

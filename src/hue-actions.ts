@@ -2,8 +2,9 @@
 
 import { Command } from 'commander'
 import { getConfig, updateConfig } from './config'
-import { listener } from './listener'
+import { startListener } from './listener'
 import { registration } from './registration'
+import { startApi } from './api'
 
 // TODO: Ideally have hue-actions.ts called index.ts and hue-actions-launch.ts as just launch.ts
 
@@ -17,23 +18,23 @@ program
 
 program
   .command('start')
-  .description('watch for CLIP sensor changes and run actions')
-  .action(options => listener()) // TODO: It's async
+  .description('start API and listener')
+  .action(options => {
+    startApi()
+    startListener()
+  }) // TODO: It's async
 
 program
   .command('register')
-  .description(
-    'register a background service to watch for CLIP sensor changes and run actions'
-  )
+  .description('register a background service with API and listener')
   .action(options => registration({ action: 'register' })) // TODO: It's async
 
 program
   .command('unregister')
-  .description(
-    'unregister a background service to watch for CLIP sensor changes and run actions'
-  )
+  .description('unregister the background service with API and listener')
   .action(options => registration({ action: 'unregister' })) // TODO: It's async
 
+// TODO: Consider this being managed via the API
 const gateway = program
   .command('gateway')
   .description('manage the gateway used for deployment')

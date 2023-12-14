@@ -1,37 +1,50 @@
 import * as z from 'zod'
 
-// TODO
-const actionSchema = z.union([
-  z.object({
-    type: z.literal('http'),
-    url: z.string(),
-    method: z.enum(['POST', 'GET', 'PUT', 'PATCH', 'DELETE']),
-    body: z.object({}),
-    // TODO: Headers
-  }),
-  z.object({
-    type: z.literal('cmd'),
-    command: z.string(),
-    workingDirectory: z.string().optional(),
-  }),
-  z.object({
-    type: z.literal('series'),
-    actions: z.array(z.object({})), // TODO: Recurse...
-  }),
-  z.object({
-    type: z.literal('parallel'),
-    actions: z.array(z.object({})), // TODO: Recurse...
-  }),
-  z.object({
-    type: z.literal('random'),
-    withoutRepeats: z.boolean(),
-    actions: z.array(z.object({})), // TODO: Recurse...
-  }),
+const httpActionSchema = z.object({
+  type: z.literal('http'),
+  url: z.string(),
+  method: z.enum(['POST', 'GET', 'PUT', 'PATCH', 'DELETE']),
+  body: z.unknown(),
+  // TODO: Headers
+})
+
+export type HttpAction = z.infer<typeof httpActionSchema>
+
+const cmdActionSchema = z.object({
+  type: z.literal('cmd'),
+  command: z.string(),
+  workingDirectory: z.string().optional(),
+})
+
+const seriesActionSchema = z.object({
+  type: z.literal('series'),
+  actions: z.array(z.object({})), // TODO: Recurse...
+})
+
+const parallelActionSchema = z.object({
+  type: z.literal('parallel'),
+  actions: z.array(z.object({})), // TODO: Recurse...
+})
+
+const randomActionSchema = z.object({
+  type: z.literal('random'),
+  withoutRepeats: z.boolean(),
+  actions: z.array(z.object({})), // TODO: Recurse...
+})
+
+const actionSchema = z.discriminatedUnion('type', [
+  httpActionSchema,
+  cmdActionSchema,
+  seriesActionSchema,
+  parallelActionSchema,
+  randomActionSchema,
 ])
 
+export type Action = z.infer<typeof actionSchema>
+
 export const configSchema = z.object({
-  gatewayUrl: z.string(),
-  gatewayApiKey: z.string(),
+  gatewayUrl: z.string().min(1),
+  gatewayApiKey: z.string().min(1),
   sensors: z.array(
     z.union([
       z.object({
@@ -57,25 +70,68 @@ export const configSchema = z.object({
 
 export type Config = z.infer<typeof configSchema>
 
-export const resourceKindSchema = z.union([
-  z.literal('light'),
-  z.literal('group'),
-  z.literal('rule'),
-  z.literal('sensor'),
-  z.literal('schedule'),
-])
-
-export type ResourceKind = z.infer<typeof resourceKindSchema>
-
-export const resourceSchema = z.object({
-  name: z.string(),
+const baseSensorSchema = z.object({
+  name: z.string().min(1),
+  swversion: z.string().min(1),
+  manufacturername: z.string().min(1),
+  modelid: z.string().min(1),
+  uniqueid: z.string().min(1),
 })
 
-export type Resource = z.infer<typeof resourceSchema>
+export const createSensorSchema = baseSensorSchema.merge(
+  z.object({
+    type: z.union([
+      z.enum(['CLIPGenericFlag', 'CLIPGenericStatus']),
+      z.string().min(1),
+    ]),
+  })
+)
 
-export const resourcesResponseSchema = z.record(
+const baseSensorStateSchema = z.object({
+  lastupdated: z.string().min(1),
+})
+
+const genericFlagStateSchema = baseSensorStateSchema.merge(
+  z.object({
+    flag: z.boolean(),
+  })
+)
+
+export type GenericFlagState = z.infer<typeof genericFlagStateSchema>
+
+const genericStatusStateSchema = baseSensorStateSchema.merge(
+  z.object({
+    status: z.number(),
+  })
+)
+
+export const getSensorSchema = z.union([
+  z.discriminatedUnion('type', [
+    baseSensorSchema.merge(
+      z.object({
+        type: z.literal('CLIPGenericFlag'),
+        state: genericFlagStateSchema,
+      })
+    ),
+    baseSensorSchema.merge(
+      z.object({
+        type: z.literal('CLIPGenericStatus'),
+        state: genericStatusStateSchema,
+      })
+    ),
+  ]),
+  baseSensorSchema.merge(
+    z.object({
+      type: z.string().min(1),
+    })
+  ),
+])
+
+export type Sensor = z.infer<typeof getSensorSchema>
+
+export const sensorsResponseSchema = z.record(
   z.string().min(1),
-  resourceSchema
+  getSensorSchema
 )
 
 export const deconzConfigSchema = z.object({
@@ -92,6 +148,9 @@ export const deconzEventSchema = z.object({
   // TODO: Discriminated union
   id: z.string().optional(), // Not for scene-called events
   uniqueid: z.string().optional(), // Only for light and sensor resources
+  state: z
+    .union([genericFlagStateSchema, genericStatusStateSchema, z.object({})])
+    .optional(),
 })
 // TODO: get this strict
 

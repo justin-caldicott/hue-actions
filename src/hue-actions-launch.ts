@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
-import { listener } from './listener'
+import { startApi } from './api'
+import { startListener } from './listener'
 
-listener() // TODO: Async OK?
+startApi()
+startListener() // TODO: Async OK?

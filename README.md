@@ -27,6 +27,8 @@ From any machine with access to the machine running hue-actions:
 curl -H "apikey: YOUR_GATEWAY_API_KEY" -X PUT --data-binary @some-path-to/hue-actions.yml http://some-host:14201/config
 ```
 
+Note: The gateway apikey is used to also authenticate requests to PUT /config.
+
 Example `hue-actions.yml`:
 
 ```yml
