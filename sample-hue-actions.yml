@@ -1,0 +1,26 @@
+sensors:
+  - name: ventilation-boost
+    type: CLIPGenericFlag
+    actions:
+      flag:
+        true:
+          type: http
+          url: 'http://...'
+          method: POST
+          body:
+            someProperty: 'foo'
+        false:
+          type: series/parallel/random/random-no-repeats
+          actions:
+            - type: http
+              url: 'http://...'
+              method: PUT
+              body:
+                someProperty: 'foo'
+  - name: bathroom-amp-volume
+    type: CLIPGenericStatus
+    actions:
+      status:
+        type: http
+        url: 'http://.../httpapi.asp?command=setPlayerCmd:vol:{value}'
+        method: GET

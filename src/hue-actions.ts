@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander'
-import { readConfig, writeConfig } from './config'
-import { service } from './service'
+import { getConfig, updateConfig } from './config'
+import { listener } from './listener'
 import { registration } from './registration'
 
 // TODO: Ideally have hue-actions.ts called index.ts and hue-actions-launch.ts as just launch.ts
@@ -18,7 +18,7 @@ program
 program
   .command('start')
   .description('watch for CLIP sensor changes and run actions')
-  .action(options => service()) // TODO: It's async
+  .action(options => listener()) // TODO: It's async
 
 program
   .command('register')
@@ -41,17 +41,17 @@ const gateway = program
 gateway
   .command('set <host> <apiKey>')
   .description('set the gateway to host the CLIP sensors')
-  .action((host: string, apiKey: string) => {
-    writeConfig({ ...readConfig(), gatewayHost: host, gatewayApiKey: apiKey })
+  .action((url: string, apiKey: string) => {
+    updateConfig({ ...getConfig(), gatewayUrl: url, gatewayApiKey: apiKey })
   })
 
 gateway
   .command('get')
   .description('get the gateway to host the CLIP sensors')
   .action(() => {
-    const { gatewayHost, gatewayApiKey } = readConfig()
+    const { gatewayUrl, gatewayApiKey } = getConfig()
     const gateway = {
-      host: gatewayHost,
+      url: gatewayUrl,
       apiKey: gatewayApiKey
         ? `${gatewayApiKey.substring(0, 4)}********`
         : undefined,

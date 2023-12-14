@@ -24,7 +24,7 @@ hue-actions gateway set <YOUR_GATEWAY_IP> <YOUR_GATEWAY_API_KEY>
 From any machine with access to the machine running hue-actions:
 
 ```sh
-curl -X POST --data-binary @path/to/hue-actions.yml http://yourMachineIp:14201/
+curl -H "apikey: YOUR_GATEWAY_API_KEY" -X PUT --data-binary @some-path-to/hue-actions.yml http://some-host:14201/config
 ```
 
 Example `hue-actions.yml`:
@@ -33,26 +33,29 @@ Example `hue-actions.yml`:
 sensors:
   - name: ventilation-boost
     type: CLIPGenericFlag
-    onAction:
-      type: http
-      url: 'http://...'
-      method: POST
-      body:
-        someProperty: 'foo'
-    offAction:
-      - type: series/parallel/random/random-no-repeats
-        actions:
-          - type: http
-            url: 'http://...'
-            method: PUT
-            body:
-              someProperty: 'foo'
+    actions:
+      flag:
+        true:
+          type: http
+          url: 'http://...'
+          method: POST
+          body:
+            someProperty: 'foo'
+        false:
+          type: series/parallel/random/random-no-repeats
+          actions:
+            - type: http
+              url: 'http://...'
+              method: PUT
+              body:
+                someProperty: 'foo'
   - name: bathroom-amp-volume
     type: CLIPGenericStatus
-    changeAction:
-      type: http
-      url: 'http://.../httpapi.asp?command=setPlayerCmd:vol:{value}'
-      method: GET
+    actions:
+      status:
+        type: http
+        url: 'http://.../httpapi.asp?command=setPlayerCmd:vol:{value}'
+        method: GET
 ```
 
 ## Contributing

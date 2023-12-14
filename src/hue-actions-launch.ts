@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-import { service } from './service'
+import { listener } from './listener'
 
-service() // TODO: Async OK?
+listener() // TODO: Async OK?
