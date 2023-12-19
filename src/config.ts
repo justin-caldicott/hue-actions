@@ -8,7 +8,7 @@ let configInstance: Config | null = null
 
 const readConfig = () =>
   configSchema.parse(
-    fse.existsSync(configPath) ? fse.readJSONSync(configPath) : {}
+    fse.existsSync(configPath) ? fse.readJSONSync(configPath) : { sensors: [] }
   )
 
 const writeConfig = (config: Config) => {

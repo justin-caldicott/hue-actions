@@ -10,6 +10,16 @@ Default port of 14201 is not configurable currently.
 
 ### Installation
 
+Currently, the package is not published to npm. So first make a tgz package:
+
+- `yarn build`
+- `npm pack`
+- copy the package to the target machine, e.g. using `scp`
+- ssh to the target machine
+- `sudo npm install -g path-to-tgz-file`
+
+#### Soon, once published to npm
+
 On a machine where you want run hue-actions:
 
 - Install node 18 or above
@@ -18,7 +28,7 @@ On a machine where you want run hue-actions:
 ### Quick start
 
 ```sh
-hue-actions gateway set <YOUR_GATEWAY_IP> <YOUR_GATEWAY_API_KEY>
+hue-actions gateway set <YOUR_GATEWAY_BASE_URL> <YOUR_GATEWAY_API_KEY>
 ```
 
 From any machine with access to the machine running hue-actions:
@@ -28,6 +38,8 @@ curl -H "apikey: YOUR_GATEWAY_API_KEY" -X PUT --data-binary @some-path-to/hue-ac
 ```
 
 Note: The gateway apikey is used to also authenticate requests to PUT /config.
+
+Note: The baseurl host should use 127.0.0.1 instead of localhost.
 
 Example `hue-actions.yml`:
 

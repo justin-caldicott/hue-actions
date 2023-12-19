@@ -1,4 +1,4 @@
-import { DeconzEvent, GenericFlagState } from './types'
+import { DeconzEvent, GenericFlagState, GenericStatusState } from './types'
 import { getConfig } from './config'
 import { getVirtualSensors } from './virtual-sensors'
 import { performAction } from './actions'
@@ -31,6 +31,26 @@ export const sensorEventHandler = async (event: DeconzEvent) => {
         break
       }
       case 'CLIPGenericStatus':
+        const action =
+          (event.state as GenericStatusState).status >= 1 &&
+          (event.state as GenericStatusState).status <= 10
+            ? sensorConfig.actions.status[
+                (event.state as GenericStatusState).status as
+                  | 1
+                  | 2
+                  | 3
+                  | 4
+                  | 5
+                  | 6
+                  | 7
+                  | 8
+                  | 9
+                  | 10
+              ]
+            : sensorConfig.actions.status.default
+        if (action) {
+          await performAction(action)
+        }
         break
     }
   }

@@ -20,6 +20,10 @@ program
   .command('start')
   .description('start API and listener')
   .action(options => {
+    if (getConfig().gatewayApiKey === undefined) {
+      console.error('Cannot start, gateway info not set')
+      return
+    }
     startApi()
     startListener()
   }) // TODO: It's async
@@ -27,7 +31,9 @@ program
 program
   .command('register')
   .description('register a background service with API and listener')
-  .action(options => registration({ action: 'register' })) // TODO: It's async
+  .action(async options => {
+    await registration({ action: 'register' })
+  }) // TODO: It's async
 
 program
   .command('unregister')
@@ -40,7 +46,7 @@ const gateway = program
   .description('manage the gateway used for deployment')
 
 gateway
-  .command('set <host> <apiKey>')
+  .command('set <baseurl> <apiKey>')
   .description('set the gateway to host the CLIP sensors')
   .action((url: string, apiKey: string) => {
     updateConfig({ ...getConfig(), gatewayUrl: url, gatewayApiKey: apiKey })

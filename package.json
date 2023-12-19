@@ -9,7 +9,7 @@
     "hue-actions": "dist/hue-actions.js"
   },
   "scripts": {
-    "build": "tsc && chmod +x dist/hue-actions-launch.js",
+    "build": "tsc && chmod +x dist/hue-actions-launch.js && npm pack",
     "start": "ts-node src/hue-actions.ts start",
     "put:config": "curl -H 'apikey: '\"$GATEWAY_APIKEY\"'' -X PUT --data-binary @../pi/hue-actions.yml http://localhost:14201/config"
   },
@@ -24,7 +24,6 @@
   },
   "dependencies": {
     "@types/auto-launch": "^5.0.5",
-    "auto-launch": "^5.0.6",
     "commander": "^11.1.0",
     "fs-extra": "^9.1.0",
     "got": "^11.8.2",

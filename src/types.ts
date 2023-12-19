@@ -16,6 +16,8 @@ const cmdActionSchema = z.object({
   workingDirectory: z.string().optional(),
 })
 
+export type CmdAction = z.infer<typeof cmdActionSchema>
+
 const seriesActionSchema = z.object({
   type: z.literal('series'),
   actions: z.array(z.object({})), // TODO: Recurse...
@@ -43,8 +45,8 @@ const actionSchema = z.discriminatedUnion('type', [
 export type Action = z.infer<typeof actionSchema>
 
 export const configSchema = z.object({
-  gatewayUrl: z.string().min(1),
-  gatewayApiKey: z.string().min(1),
+  gatewayUrl: z.string().min(1).optional(),
+  gatewayApiKey: z.string().min(1).optional(),
   sensors: z.array(
     z.union([
       z.object({
@@ -61,7 +63,20 @@ export const configSchema = z.object({
         name: z.string(),
         type: z.literal('CLIPGenericStatus'),
         actions: z.object({
-          status: actionSchema,
+          status: z.object({
+            // TODO: Find a better way!
+            default: actionSchema.optional(),
+            1: actionSchema.optional(),
+            2: actionSchema.optional(),
+            3: actionSchema.optional(),
+            4: actionSchema.optional(),
+            5: actionSchema.optional(),
+            6: actionSchema.optional(),
+            7: actionSchema.optional(),
+            8: actionSchema.optional(),
+            9: actionSchema.optional(),
+            10: actionSchema.optional(),
+          }),
         }),
       }),
     ])
@@ -98,6 +113,7 @@ const genericFlagStateSchema = baseSensorStateSchema.merge(
 )
 
 export type GenericFlagState = z.infer<typeof genericFlagStateSchema>
+export type GenericStatusState = z.infer<typeof genericStatusStateSchema>
 
 const genericStatusStateSchema = baseSensorStateSchema.merge(
   z.object({

@@ -5,7 +5,7 @@ import { configSchema } from './types'
 import { getVirtualSensors, invalidateSensors } from './virtual-sensors'
 import { createSensor } from './gateway-client'
 
-const host = 'localhost'
+const host = '0.0.0.0'
 const port = 14201
 
 const getSensorName = ({ name, type }: { name: string; type: string }) =>
@@ -21,6 +21,7 @@ const putConfig = async (configYaml: string) => {
   const sensorsToCreate = config.sensors.filter(
     s => !existingVirtualSensorFullNames.has(getSensorName(s))
   )
+  // TODO: Remove unused sensors that we've created
   for (const sensor of sensorsToCreate) {
     await createSensor(sensor)
     console.log(`created virtual sensor ${getSensorName(sensor)}`)
