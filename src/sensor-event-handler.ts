@@ -32,10 +32,11 @@ export const sensorEventHandler = async (event: DeconzEvent) => {
       }
       case 'CLIPGenericStatus':
         const action =
-          (event.state as GenericStatusState).status >= 1 &&
+          (event.state as GenericStatusState).status >= 0 &&
           (event.state as GenericStatusState).status <= 10
             ? sensorConfig.actions.status[
                 (event.state as GenericStatusState).status as
+                  | 0
                   | 1
                   | 2
                   | 3

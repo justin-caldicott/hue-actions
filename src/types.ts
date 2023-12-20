@@ -66,6 +66,7 @@ export const configSchema = z.object({
           status: z.object({
             // TODO: Find a better way!
             default: actionSchema.optional(),
+            0: actionSchema.optional(),
             1: actionSchema.optional(),
             2: actionSchema.optional(),
             3: actionSchema.optional(),
