@@ -13,7 +13,6 @@ Default port of 14201 is not configurable currently.
 Currently, the package is not published to npm. So first make a tgz package:
 
 - `yarn build`
-- `npm pack`
 - copy the package to the target machine, e.g. using `scp`
 - ssh to the target machine
 - `sudo npm install -g path-to-tgz-file`
