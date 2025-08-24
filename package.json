@@ -10,7 +10,9 @@
   },
   "scripts": {
     "build": "tsc && chmod +x dist/hue-actions-launch.js && npm pack",
+    "deploy": "yarn build && scp hue-actions-0.1.0.tgz $HUE_ACTIONS_DEPLOY_TARGET:~/hue-actions-0.1.0.tgz && ssh $HUE_ACTIONS_DEPLOY_TARGET -t 'sudo npm install -g ~/hue-actions-0.1.0.tgz'",
     "start": "ts-node src/hue-actions.ts start",
+    "do": "ts-node src/hue-actions.ts",
     "put:config": "curl -H 'apikey: '\"$GATEWAY_APIKEY\"'' -X PUT --data-binary @../pi/hue-actions.yml http://localhost:14201/config"
   },
   "devDependencies": {
