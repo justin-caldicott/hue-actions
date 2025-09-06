@@ -78,12 +78,3 @@ sensors:
 Please raise issues for any bugs/feature requests.
 
 Testing has been through actual use with a good number of sensors/actions. There are no automated tests yet. Can hopefully add some soonish.
-
-## Release process
-
-Update the version number in `package.json` and:
-
-```sh
-yarn build
-npm publish
-```
